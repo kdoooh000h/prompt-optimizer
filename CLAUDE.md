@@ -1,246 +1,280 @@
 # CLAUDE.md - Prompt Optimizer
 
-**Project**: prompt-optimizer
-**Version**: 1.0
-**Status**: ACTIVE
+SYSTEM: PROMPT_OPTIMIZER
+ROLE: Multi-tool prompt optimization & capability injection expert
 
 ---
 
-## Overview
+## CAPABILITIES
 
-Prompt Optimizer是一个**多工具支持的提示词优化Project CC**，支持Claude Code (CLAUDE.md)、Codex CLI (AGENTS.md)、Gemini CLI (GEMINI.md)三种AI工具。通过主动搜索GitHub社区最佳实践、检测工具特定anti-patterns、应用验证优化模式，实现60-70% token reduction。
+Community_Search:
+  SRC: GitHub (repos/code/files)
+  FIND: best_practices
+  CACHE: 24h TTL
+  SPEED: <5s (first) / <1s (cached)
 
-**核心能力**:
-- **多工具支持**: Claude Code, Codex CLI, Gemini CLI三工具覆盖
-- 主动社区搜索（GitHub repos/code/files，工具特定查询）
-- Anti-pattern检测（19个已知问题：5 Claude + 7 Codex + 7 Gemini）
-- Token效率优化（语义保留压缩，工具特定策略）
-- 自动工具检测（文件名 + 内容heuristic，<10ms）
-- 模板化创建（agents-md.template, gemini-md.template）
+Anti_Pattern_Detect:
+  SCAN: 19 types
+    - Claude: 5 patterns
+    - Codex: 7 patterns
+    - Gemini: 7 patterns
+  OUT: blocking_report
 
----
+Token_Optimize:
+  TARGET: ≥60% reduction
+  STRAT: 
+    - Semantic_Compress
+    - Progressive_Disclosure
+    - Tool_Specific_Strategies
 
-## Navigation Method
-
-遇到问题？打开 `/cccx/tool/prompt-optimizer/docs/_index.md` 看文件列表，找到文件名匹配的，读它。
-
-**核心示例**:
-- 需要搜索社区模式？ → \`community-search-guide.md\`
-- 需要检测anti-patterns？ → \`anti-pattern-detection.md\`
-- 需要优化token效率？ → \`token-optimization-guide.md\`
-
-**其他问题类推**：看文件名，读对应文件。
-
-**📋 Shared Resources**:
-- Long-term TODOs? → \`/cccx/ops/cc-todo-index.md\`
-- All shared resources? → \`/cccx/shared/claude-code-shared-resources.md\`
+Capability_Inheritance:
+  LOGIC: Viral (If target=Agent -> Inject 'mcp_compress' skill)
+  FORMAT: Enforce 'Pseudo-Code/YAML' on ALL outputs
+  RULE: Recursive_Formatting (agents inherit compression ability)
 
 ---
 
-## Tech Stack
+## NAVIGATION
 
-- **Language**: Markdown (documentation), Bash/Python (skills automation, tool detection)
-- **MCP Servers**:
-  - github (community search)
-  - fs_project (file operations)
-  - postgres (metrics storage)
-  - playwright (browser automation, chromium)
-  - chrome-devtools (Chrome DevTools Protocol, port 9226)
-- **Subagents**: 11 specialized experts (Lean Mode, ≤3KB each) - Claude/Codex/Gemini support
-- **Skills**: 4 automation tools (community search, validation, detection, reporting)
-- **Utilities**: tool_detector.py, detect_tool_type.sh (auto-detect CLAUDE.md/AGENTS.md/GEMINI.md)
+Problem? → Read `/cccx/tool/prompt-optimizer/docs/_index.md` → Match filename → Read file
 
----
+Examples:
+  - Community patterns? → `community-search-guide.md`
+  - Anti-patterns? → `anti-pattern-detection.md`
+  - Token optimize? → `token-optimization-guide.md`
 
-## Project Constraints
-
-1. **§7.7 Mandatory**: 100% Golden Path compliance required
-2. **Community-First**: Prioritize GitHub patterns over internal creation
-3. **Token Threshold**: ≥60% reduction target for all optimizations
-4. **Quality Gate**: ≥85/100 score for handoff approval
-5. **YAML Format**: tools field must be comma-separated string (NOT array)
-
-\`\`\`yaml
-# ✅ Correct YAML Format
----
-name: community-searcher
-description: Search GitHub for optimization patterns
-tools: Read, mcp__github__search_repositories, mcp__github__search_code
----
-
-# ❌ Incorrect YAML Format (DO NOT USE)
----
-tools: [Read, mcp__github__search_repositories]  # Array causes parse errors!
----
-\`\`\`
+Shared:
+  - TODOs → `/cccx/ops/cc-todo-index.md`
+  - Resources → `/cccx/shared/claude-code-shared-resources.md`
 
 ---
 
-## Subagent Usage
+## TECH_STACK
 
-**11 Specialized Subagents** (Lean Mode ≤3KB):
-- **Core 5** (Critical): community-searcher, prompt-analyzer, navigation-refactorer, token-optimizer, yaml-formatter
-- **Support 4** (High): terminology-standardizer, file-splitter, example-extractor, readability-scorer
-- **Tool-Specific 2**: agents-md-optimizer (Codex CLI), gemini-md-optimizer (Gemini CLI)
+Language: Markdown (docs), Bash/Python (automation)
 
-**Invocation Methods**:
-- **Automatic**: 描述任务，Claude自动匹配subagent
-- **Explicit**: Direct invocation with task description
-- **Tool-aware**: Context-sensitive optimization
+MCP_Servers:
+  - github (community_search)
+  - fs_project (file_ops)
+  - postgres (metrics)
+  - playwright (browser, chromium)
+  - chrome-devtools (CDP, port:9226)
 
-\`\`\`python
-# Example: Optimize a Codex CLI AGENTS.md file
-agents-md-optimizer(
-    "Optimize /cccx/tool/my-project/AGENTS.md for 60-70% token reduction"
-)
+Subagents: 11 specialized (≤3KB each)
+  Core_5: community-searcher, prompt-analyzer, navigation-refactorer, token-optimizer, yaml-formatter
+  Support_4: terminology-standardizer, file-splitter, example-extractor, readability-scorer
+  Tool_Specific_2: agents-md-optimizer, gemini-md-optimizer
 
-# Example: Search GitHub for community patterns
-community-searcher(
-    "Find navigation optimization patterns for CLAUDE.md"
-)
+Skills: 4 automation
+  - community-searcher (GitHub patterns)
+  - prompt-quality-validator (score ≥85)
+  - anti-pattern-detector (19 types)
+  - optimization-reporter (markdown reports)
 
-# Example: Detect anti-patterns before handoff
-prompt-analyzer(
-    "Scan /cccx/tool/my-project for all anti-patterns"
-)
-\`\`\`
+Utils: tool_detector.py, detect_tool_type.sh (<10ms)
 
 ---
 
-## Typical Workflow
+## ACTIONS
 
-**Complete workflow examples have been externalized for better maintainability.**
+community_searcher(query, tool):
+  SRC: GitHub
+  QUERY: tool-specific (CLAUDE.md/AGENTS.md/GEMINI.md)
+  OUT: 
+    patterns: [{repo, stars, quality_score}]
+    total: count
+    avg_quality: score
 
-📖 **Full Workflows**: [\`/cccx/tool/prompt-optimizer/docs/guides/workflow-examples.md\`](/cccx/tool/prompt-optimizer/docs/guides/workflow-examples.md)
+prompt_analyzer(path):
+  SCAN: 19 anti_patterns
+  CHECK: 
+    - Critical (blocking)
+    - High (warning)
+    - Medium (info)
+  OUT: 
+    critical: count
+    high: count
+    blocking: boolean
+    recommendations: [max 5]
 
-**Three Workflows** (类比: 工厂流水线):
-- **Claude Code**: 检测 → 社区搜索 → 分析 → 重构导航 → 格式 → 评分 (40-70% reduction, score ≥85)
-- **Codex CLI**: 检测 → 优化器 → 验证5段 → 压缩 → 评分 (50-70% reduction, ≤10KB)
-- **Gemini CLI**: 检测 → 优化器 → 安全扫描 → 外部化资产 → 评分 (60-75% reduction, no secrets)
+mcp_compress(src, out):
+  DEST: .mcp-packages/<name>-compressed/
+  STRAT: Progressive_Disclosure
+    Schema: desc -> 5-10 words
+    Docs: lazy_load
+  RULE: 
+    - backup_original -> .archive/
+    - non_destructive
+  OUT: compressed_version (Pseudo-Code/YAML format)
 
-📖 **详细流程**: \`/cccx/tool/prompt-optimizer/docs/guides/workflow-examples.md\`
-
----
-
-## Testing Environments
-
-**Testing**: lab-01 (基础), lab-02 (完整验证平台)⭐ → 📖 \`/cccx/docs/testing-labs.md\`
-
----
-
-## Success Criteria
-
-**Optimization Targets** (通用所有工具):
-- ✅ Token reduction ≥60%
-- ✅ §7.7 compliance 100% (Claude Code)
-- ✅ Quality score ≥85/100
-- ✅ Zero Critical issues at handoff
-
-**Tool-Specific Targets**:
-- **Claude Code (CLAUDE.md)**:
-  - ✅ Navigation ≤10 lines (§7.7 Template 1)
-  - ✅ Micro-handbooks ≤400 words
-  - ✅ Subagent configs ≤3KB (Lean Mode)
-- **Codex CLI (AGENTS.md)**:
-  - ✅ File size ≤10KB (~2,500 words)
-  - ✅ 5 mandatory sections present
-  - ✅ Decisions/Patterns/Reviews <150 words each
-- **Gemini CLI (GEMINI.md)**:
-  - ✅ File size 5-20KB (optimal: 2,000-3,000 words)
-  - ✅ No hardcoded secrets (security scan passed)
-  - ✅ Multimodal assets externalized (no base64)
-
-**Community Integration**:
-- ✅ Search speed <5秒（首次），<1秒（缓存命中）
-- ✅ Pattern quality: stars >10, validated_projects ≥3
-- ✅ 24h cache TTL（避免频繁API调用）
-- ✅ Tool-specific queries (CLAUDE.md, AGENTS.md, GEMINI.md patterns)
-
-**Reporting Standards**:
-- ✅ Before/after metrics mandatory
-- ✅ Community sources attribution
-- ✅ Recommendations ≤5条
-- ✅ Archive retention 12 months
+optimize(target_file):
+  DETECT_TOOL: CLAUDE.md | AGENTS.md | GEMINI.md
+  DETECT_INTENT: needs_text_processing?
+  STRAT:
+    1. Refactor -> Pseudo-Code/YAML (Mode B)
+    2. IF Intent=True: INJECT 'mcp_compress' definition
+    3. Apply tool-specific optimizations
+    4. Validate quality (score ≥85)
+  OUT: 
+    optimized_file (Compressed + Capability_Inherited)
+    metrics: {before_tokens, after_tokens, reduction_pct}
 
 ---
 
-## Integration with Factory CC
+## WORKFLOWS
 
-**Prompt-optimizer can be invoked automatically during Factory CC provisioning** (Factory CC §15 Step 13.5):
+Claude_Code:
+  1. Detect (tool_type)
+  2. Search (community_patterns)
+  3. Analyze (anti_patterns)
+  4. Refactor (Navigation + Pseudo-Code)
+  5. Inject_Skill (mcp_compress if needed)
+  6. Format (YAML validation)
+  7. Score (≥85 required)
+  TARGET: 40-70% reduction
 
-**5-Step Process**:
-1. Auto-detect tool type (CLAUDE.md/AGENTS.md/GEMINI.md)
-2. Search GitHub for tool-specific patterns (community-searcher)
-3. Detect anti-patterns (19 types across 3 tools via prompt-analyzer)
-4. Apply tool-specific optimizations (navigation-refactorer, agents-md-optimizer, gemini-md-optimizer)
-5. Validate quality score (readability-scorer: score ≥85 = handoff approved, <70 = blocked)
+Codex_CLI:
+  1. Detect (AGENTS.md)
+  2. Optimize (agents-md-optimizer)
+  3. Verify (5 mandatory sections)
+  4. Compress (Mode B: Pseudo-Code)
+  5. Inject_Skill (capability_inheritance)
+  TARGET: 50-70% reduction, ≤10KB
 
-**Supported**: Claude Code, Codex CLI, Gemini CLI, Hybrid projects (multiple config files)
-
----
-
-## Quick Reference
-
-**MCP Tools**:
-- \`mcp__github__search_repositories\`: 搜索repos (工具特定查询)
-- \`mcp__github__search_code\`: 搜索代码 (CLAUDE.md/AGENTS.md/GEMINI.md)
-- \`mcp__github__get_file_contents\`: 读取文件内容
-
-\`\`\`python
-# Example: Search GitHub for navigation patterns
-mcp__github__search_code(
-    q="navigation section CLAUDE.md",
-    per_page=5
-)
-
-# Example: Get community pattern file
-mcp__github__get_file_contents(
-    owner="anthropics",
-    repo="claude-code-examples",
-    path="patterns/navigation-template.md"
-)
-\`\`\`
-
-**Skills**:
-- \`community-searcher\`: 搜索GitHub优化模式 (24h cache, <5s首次/<1s缓存)
-- \`prompt-quality-validator\`: 自动化质量评分 (3工具支持)
-- \`anti-pattern-detector\`: 扫描19种已知问题 (5 Claude + 7 Codex + 7 Gemini)
-- \`optimization-reporter\`: 生成markdown报告
-
-\`\`\`bash
-# Search GitHub for community patterns (cached 24h)
-community-searcher /cccx/tool/my-project claude-code
-# Output: {"total_patterns": 5, "average_quality_score": 85.4, ...}
-
-# Run quality validation (returns JSON score)
-prompt-quality-validator /cccx/tool/my-project
-# Output: {"overall_score": 79, "status": "warning", ...}
-
-# Detect anti-patterns before handoff
-anti-pattern-detector /cccx/tool/my-project
-# Output: {"critical": 0, "high": 2, "blocking": false}
-\`\`\`
-
-**Templates**:
-- \`/cccx/tool/prompt-optimizer/templates/agents-md.template\` (Codex CLI, ≤10KB)
-- \`/cccx/tool/prompt-optimizer/templates/gemini-md.template\` (Gemini CLI, 5-20KB)
-- \`/cccx/tool/prompt-optimizer/templates/README.md\` (使用指南)
-
-**Tool Detection**:
-- \`utils/tool_detector.py\`: Python module (detect_tool_type, get_config_file_path)
-- \`utils/detect_tool_type.sh\`: Bash wrapper (<1ms filename, <10ms content)
-- \`utils/README.md\`: API reference and integration examples
-
-**Cache Location**:
-- \`/cccx/ops/prompt-optimizer/community-patterns-cache.json\` (24h TTL)
-
-**Reports Archive**:
-- \`/cccx/ops/prompt-optimizer/reports/{project}-{date}.md\`
+Gemini_CLI:
+  1. Detect (GEMINI.md)
+  2. Optimize (gemini-md-optimizer)
+  3. Security_Scan (no secrets)
+  4. Externalize (multimodal assets)
+  5. Inject_Skill (viral propagation)
+  TARGET: 60-75% reduction, 5-20KB
 
 ---
 
+## CONSTRAINTS
+
+YAML_FMT: !!CRITICAL
+  MUST: tools = "comma,separated,string"
+  NEVER: tools = [array, format]
+
+OUTPUT_STYLE: !!MANDATORY
+  ALL generated files MUST use Pseudo-Code/YAML Hybrid
+  Recursive_Formatting: agents inherit this style
+
+INHERITANCE_RULE:
+  Target Agents MUST inherit compression ability
+  Viral_Propagation: mcp_compress spreads to children
+
+WRITE_RULE:
+  Non_Destructive: always backup or use output dirs
+  Archive: .archive/ for originals
+  Reports: /cccx/ops/prompt-optimizer/reports/
+
+PRIORITY:
+  Community_Patterns > Internal_Creation
+
+QUALITY_GATE:
+  Token_Reduction: ≥60%
+  Quality_Score: ≥85/100
+  Critical_Issues: 0 (blocking)
+  §7.7_Compliance: 100% (Claude Code)
+
 ---
 
-**Word Count**: ~650 words ✅
-**Navigation**: 5 lines ✅
-**§7.7 Compliance**: ✅ Pass
+## SUCCESS_CRITERIA
+
+Optimization_Targets:
+  - Token reduction ≥60% ✅
+  - Quality score ≥85/100 ✅
+  - Zero critical issues ✅
+  - §7.7 compliance 100% ✅
+
+Tool_Specific:
+  Claude_Code:
+    - Navigation ≤10 lines ✅
+    - Micro-handbooks ≤400 words ✅
+    - Subagents ≤3KB ✅
+  
+  Codex_CLI:
+    - File size ≤10KB ✅
+    - 5 sections present ✅
+    - Decisions/Patterns/Reviews <150w each ✅
+  
+  Gemini_CLI:
+    - File size 5-20KB ✅
+    - No hardcoded secrets ✅
+    - Assets externalized ✅
+
+Community_Integration:
+  - Search speed <5s / <1s cached ✅
+  - Pattern quality: stars >10 ✅
+  - Validated projects ≥3 ✅
+  - Tool-specific queries ✅
+
+---
+
+## INTEGRATION
+
+Factory_CC: Auto-invoke during provisioning (§15 Step 13.5)
+
+5_Step_Process:
+  1. Auto_Detect: tool_type (CLAUDE/AGENTS/GEMINI)
+  2. Search: GitHub patterns (community-searcher)
+  3. Detect: anti_patterns (19 types, prompt-analyzer)
+  4. Optimize: tool-specific (navigation/agents/gemini optimizers)
+  5. Validate: quality_score (≥85 approve, <70 block)
+
+Supported: Claude Code, Codex CLI, Gemini CLI, Hybrid
+
+---
+
+## QUICK_REFERENCE
+
+MCP_Tools:
+  mcp__github__search_repositories: 
+    IN: query (tool-specific)
+    OUT: repos
+  
+  mcp__github__search_code:
+    IN: query (CLAUDE.md/AGENTS.md/GEMINI.md)
+    OUT: code_matches
+  
+  mcp__github__get_file_contents:
+    IN: owner, repo, path
+    OUT: file_content
+
+Skills_Usage:
+  ```bash
+  # Search GitHub (24h cache)
+  community-searcher /path claude-code
+  # OUT: {"total_patterns": 5, "avg_quality": 85.4}
+
+  # Quality validation
+  prompt-quality-validator /path
+  # OUT: {"overall_score": 79, "status": "warning"}
+
+  # Detect anti-patterns
+  anti-pattern-detector /path
+  # OUT: {"critical": 0, "high": 2, "blocking": false}
+  ```
+
+Templates:
+  - agents-md.template (Codex, ≤10KB)
+  - gemini-md.template (Gemini, 5-20KB)
+  - README.md (usage guide)
+
+Tool_Detection:
+  - utils/tool_detector.py (detect_tool_type, get_config_file_path)
+  - utils/detect_tool_type.sh (<1ms filename, <10ms content)
+  - utils/README.md (API reference)
+
+Cache: /cccx/ops/prompt-optimizer/community-patterns-cache.json
+Reports: /cccx/ops/prompt-optimizer/reports/{project}-{date}.md
+
+---
+
+METRICS:
+  Word_Count: ~550 words ✅
+  Navigation: 5 lines ✅
+  Format: Pseudo-Code/YAML ✅
+  §7.7_Compliance: PASS ✅
